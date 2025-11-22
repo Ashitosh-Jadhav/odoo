@@ -240,7 +240,6 @@ export default function Dashboard() {
   // Calculate processing time bars from recent receipts (last 5)
   const recentReceiptsForBars = receipts
     .filter(r => r.status === 'done')
->>>>>>> aa07ca3238636758a4c67fe6288eef74db5a68de
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 5);
 
