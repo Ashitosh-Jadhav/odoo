@@ -56,8 +56,8 @@ export default function Dashboard() {
 
   // Get recent activity (last 5 transactions)
   const recentActivity = [
-    ...receipts.slice(0, 3).map(r => ({ ...r, type: 'receipt' })),
-    ...deliveries.slice(0, 2).map(d => ({ ...d, type: 'delivery' })),
+    ...receipts.slice(0, 3).map(r => ({ ...r, type: 'receipt', uniqueId: `receipt-${r.id}` })),
+    ...deliveries.slice(0, 2).map(d => ({ ...d, type: 'delivery', uniqueId: `delivery-${d.id}` })),
   ]
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 5);
@@ -85,7 +85,7 @@ export default function Dashboard() {
         {kpiCards.map((kpi, index) => {
           const Icon = kpi.icon;
           return (
-            <Card key={index}>
+            <Card key={`kpi-${kpi.title}-${index}`}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs text-slate-400">{kpi.title}</span>
                 <Icon className={`h-5 w-5 ${kpi.iconColor}`} />
@@ -144,7 +144,7 @@ export default function Dashboard() {
             </thead>
             <tbody className="divide-y divide-white/10">
               {recentActivity.map((activity) => (
-                <tr key={activity.id} className="hover:bg-white/5">
+                <tr key={activity.uniqueId} className="hover:bg-white/5">
                   <td className="py-3 px-4">
                     <span className="text-xs font-medium text-slate-300">
                       {activity.type === 'receipt' ? 'Receipt' : 'Delivery'}

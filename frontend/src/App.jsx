@@ -3,6 +3,7 @@ import { AppProvider, useApp } from './context/AppContext';
 import Layout from './components/layout/Layout';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
+import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import Products from './pages/Products';
 import Receipts from './pages/Receipts';
@@ -33,6 +34,14 @@ function AppRoutes() {
           element={
             <PublicRoute>
               <Login />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <PublicRoute>
+              <Signup />
             </PublicRoute>
           }
         />
