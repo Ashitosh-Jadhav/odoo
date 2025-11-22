@@ -145,6 +145,10 @@ export function AppProvider({ children }) {
           freeToUse: stockData.freeToUse,
           stock: stockData.onHand, // Keep stock in sync with onHand
         };
+        // Update per unit cost if provided
+        if (stockData.perUnitCost !== undefined) {
+          updated.perUnitCost = stockData.perUnitCost;
+        }
         updated.status = getProductStatus(updated.stock, updated.reorderLevel);
         return updated;
       }

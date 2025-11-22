@@ -1,20 +1,19 @@
 import { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import TopNav from '../components/stock/TopNav';
 import SearchBar from '../components/stock/SearchBar';
 import StockTable from '../components/stock/StockTable';
 import StockCard from '../components/stock/StockCard';
 import EditStockModal from '../components/stock/EditStockModal';
-import AddStockModal from '../components/stock/AddStockModal';
+import AddProductModal from '../components/stock/AddProductModal';
 import RemoveStockModal from '../components/stock/RemoveStockModal';
 import Button from '../components/ui/Button';
 import { Plus, Minus } from 'lucide-react';
 
 export default function Products() {
-  const { products, updateStock, showToast } = useApp();
+  const { products, addProduct, updateStock, deleteProduct, showToast } = useApp();
   const [searchTerm, setSearchTerm] = useState('');
   const [isStockModalOpen, setIsStockModalOpen] = useState(false);
-  const [isAddStockModalOpen, setIsAddStockModalOpen] = useState(false);
+  const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
   const [isRemoveStockModalOpen, setIsRemoveStockModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -42,106 +41,91 @@ export default function Products() {
     handleCloseStockModal();
   };
 
-  const handleAddStock = (stockData) => {
-    updateStock(stockData.productId, {
-      onHand: stockData.onHand,
-      freeToUse: stockData.freeToUse,
-    });
-    showToast('Stock added successfully', 'success');
-    setIsAddStockModalOpen(false);
+  const handleAddProduct = (productData) => {
+    addProduct(productData);
+    setIsAddProductModalOpen(false);
   };
 
-  const handleRemoveStock = (stockData) => {
-    updateStock(stockData.productId, {
-      onHand: stockData.onHand,
-      freeToUse: stockData.freeToUse,
-    });
-    showToast('Stock removed successfully', 'success');
+  const handleRemoveStock = (productId) => {
+    deleteProduct(productId);
     setIsRemoveStockModalOpen(false);
   };
 
   return (
-    <div className="min-h-screen bg-slate-950">
-      {/* Top Navigation Bar - Full Width */}
-      <TopNav />
-
-      {/* Main Content */}
-      <div className="p-4 lg:p-6 space-y-6 animate-fade-in">
-        {/* Header Row - Stock Title on Left, Search on Right */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex-1">
-            <h1 className="text-3xl lg:text-4xl font-bold text-slate-50 mb-2">Stock</h1>
-            <p className="text-sm text-slate-400 hidden sm:block">
-              This page contains the warehouse details & location.
-            </p>
-          </div>
-          <div className="w-full sm:w-auto">
-            <SearchBar value={searchTerm} onChange={setSearchTerm} />
-          </div>
+    <div className="space-y-6 animate-fade-in">
+      {/* Header Row - Stock Title on Left, Search on Right */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex-1">
+          <h1 className="text-3xl lg:text-4xl font-bold text-slate-50 mb-2">Stock</h1>
+          <p className="text-sm text-slate-400 hidden sm:block">
+            This page contains the warehouse details & location.
+          </p>
         </div>
-
-        {/* Action Buttons */}
-        <div className="flex items-center gap-3">
-          <Button
-            variant="primary"
-            onClick={() => setIsAddStockModalOpen(true)}
-            className="gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            Add Stock
-          </Button>
-          <Button
-            variant="danger"
-            onClick={() => setIsRemoveStockModalOpen(true)}
-            className="gap-2"
-          >
-            <Minus className="h-4 w-4" />
-            Remove Stock
-          </Button>
+        <div className="w-full sm:w-auto">
+          <SearchBar value={searchTerm} onChange={setSearchTerm} />
         </div>
-
-        {/* Desktop Table View */}
-        <div className="hidden md:block">
-          <StockTable products={filteredProducts} onEdit={handleEdit} />
-        </div>
-
-        {/* Mobile Card View */}
-        <div className="md:hidden grid grid-cols-1 gap-4">
-          {filteredProducts.length === 0 ? (
-            <div className="rounded-lg border border-white/10 bg-white/5 p-12 text-center">
-              <p className="text-sm text-slate-400">No products found</p>
-            </div>
-          ) : (
-            filteredProducts.map((product) => (
-              <StockCard key={product.id} product={product} onEdit={handleEdit} />
-            ))
-          )}
-        </div>
-
-        {/* Edit Stock Modal */}
-        <EditStockModal
-          isOpen={isStockModalOpen}
-          onClose={handleCloseStockModal}
-          product={selectedProduct}
-          onSave={handleSave}
-        />
-
-        {/* Add Stock Modal */}
-        <AddStockModal
-          isOpen={isAddStockModalOpen}
-          onClose={() => setIsAddStockModalOpen(false)}
-          products={products}
-          onSave={handleAddStock}
-        />
-
-        {/* Remove Stock Modal */}
-        <RemoveStockModal
-          isOpen={isRemoveStockModalOpen}
-          onClose={() => setIsRemoveStockModalOpen(false)}
-          products={products}
-          onSave={handleRemoveStock}
-        />
       </div>
+
+      {/* Action Buttons */}
+      <div className="flex items-center gap-3">
+        <Button
+          variant="primary"
+          onClick={() => setIsAddProductModalOpen(true)}
+          className="gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          Add Product
+        </Button>
+        <Button
+          variant="danger"
+          onClick={() => setIsRemoveStockModalOpen(true)}
+          className="gap-2"
+        >
+          <Minus className="h-4 w-4" />
+          Remove Stock
+        </Button>
+      </div>
+
+      {/* Desktop Table View */}
+      <div className="hidden md:block">
+        <StockTable products={filteredProducts} onEdit={handleEdit} />
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="md:hidden grid grid-cols-1 gap-4">
+        {filteredProducts.length === 0 ? (
+          <div className="rounded-lg border border-white/10 bg-white/5 p-12 text-center">
+            <p className="text-sm text-slate-400">No products found</p>
+          </div>
+        ) : (
+          filteredProducts.map((product) => (
+            <StockCard key={product.id} product={product} onEdit={handleEdit} />
+          ))
+        )}
+      </div>
+
+      {/* Edit Stock Modal */}
+      <EditStockModal
+        isOpen={isStockModalOpen}
+        onClose={handleCloseStockModal}
+        product={selectedProduct}
+        onSave={handleSave}
+      />
+
+      {/* Add Product Modal */}
+      <AddProductModal
+        isOpen={isAddProductModalOpen}
+        onClose={() => setIsAddProductModalOpen(false)}
+        onSave={handleAddProduct}
+      />
+
+      {/* Remove Stock Modal */}
+      <RemoveStockModal
+        isOpen={isRemoveStockModalOpen}
+        onClose={() => setIsRemoveStockModalOpen(false)}
+        products={products}
+        onSave={handleRemoveStock}
+      />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import Button from '../ui/Button';
 
 export default function EditStockModal({ isOpen, onClose, product, onSave }) {
   const [formData, setFormData] = useState({
+    perUnitCost: '',
     onHand: '',
     freeToUse: '',
   });
@@ -13,6 +14,7 @@ export default function EditStockModal({ isOpen, onClose, product, onSave }) {
   useEffect(() => {
     if (product && isOpen) {
       setFormData({
+        perUnitCost: (product.perUnitCost || product.cost || 0).toString(),
         onHand: (product.onHand ?? product.stock ?? 0).toString(),
         freeToUse: (product.freeToUse ?? product.onHand ?? product.stock ?? 0).toString(),
       });
@@ -24,8 +26,13 @@ export default function EditStockModal({ isOpen, onClose, product, onSave }) {
     e.preventDefault();
     const newErrors = {};
 
+    const perUnitCostNum = parseFloat(formData.perUnitCost);
     const onHandNum = parseFloat(formData.onHand);
     const freeToUseNum = parseFloat(formData.freeToUse);
+
+    if (isNaN(perUnitCostNum) || perUnitCostNum < 0) {
+      newErrors.perUnitCost = 'Valid per unit cost is required';
+    }
 
     if (isNaN(onHandNum) || onHandNum < 0) {
       newErrors.onHand = 'Valid on-hand quantity is required';
@@ -45,6 +52,7 @@ export default function EditStockModal({ isOpen, onClose, product, onSave }) {
     }
 
     onSave({
+      perUnitCost: perUnitCostNum,
       onHand: onHandNum,
       freeToUse: freeToUseNum,
     });
@@ -60,6 +68,20 @@ export default function EditStockModal({ isOpen, onClose, product, onSave }) {
           <p className="text-xs text-slate-400 mb-1">Product Name</p>
           <p className="text-sm font-medium text-slate-200">{product.name}</p>
         </div>
+
+        <Input
+          label="Per Unit Cost (₹)"
+          type="number"
+          value={formData.perUnitCost}
+          onChange={(e) => {
+            setFormData({ ...formData, perUnitCost: e.target.value });
+            setErrors({ ...errors, perUnitCost: '' });
+          }}
+          error={errors.perUnitCost}
+          required
+          min="0"
+          step="0.01"
+        />
 
         <Input
           label="On Hand"

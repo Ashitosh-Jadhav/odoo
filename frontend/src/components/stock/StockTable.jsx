@@ -10,31 +10,23 @@ export default function StockTable({ products, onEdit }) {
   }
 
   return (
-    <div className="rounded-lg border border-white/10 bg-white/5 overflow-hidden shadow-sm">
+    <div className="rounded-lg border border-white/10 bg-white/5 overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-white/10 bg-white/5">
-              <th className="text-left py-3 px-4 text-xs font-medium text-slate-400 uppercase tracking-wider">
-                Product
-              </th>
-              <th className="text-left py-3 px-4 text-xs font-medium text-slate-400 uppercase tracking-wider">
-                Per Unit Cost
-              </th>
-              <th className="text-left py-3 px-4 text-xs font-medium text-slate-400 uppercase tracking-wider">
-                On Hand
-              </th>
-              <th className="text-left py-3 px-4 text-xs font-medium text-slate-400 uppercase tracking-wider">
-                Free to Use
-              </th>
-              <th className="text-center py-3 px-4 text-xs font-medium text-slate-400 uppercase tracking-wider">
-                Actions
-              </th>
+            <tr className="border-b border-white/10">
+              <th className="text-left py-3 px-4 text-xs font-medium text-slate-400">Product</th>
+              <th className="text-left py-3 px-4 text-xs font-medium text-slate-400">SKU</th>
+              <th className="text-left py-3 px-4 text-xs font-medium text-slate-400">Per Unit Cost</th>
+              <th className="text-left py-3 px-4 text-xs font-medium text-slate-400">On Hand</th>
+              <th className="text-left py-3 px-4 text-xs font-medium text-slate-400">Free to Use</th>
+              <th className="text-left py-3 px-4 text-xs font-medium text-slate-400">Status</th>
+              <th className="text-right py-3 px-4 text-xs font-medium text-slate-400">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/10">
-            {products.map((product) => (
-              <StockRow key={product.id} product={product} onEdit={onEdit} />
+            {products.map((product, index) => (
+              <StockRow key={product.id} product={product} onEdit={onEdit} index={index} />
             ))}
           </tbody>
         </table>
