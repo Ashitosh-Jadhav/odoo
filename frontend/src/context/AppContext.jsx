@@ -79,6 +79,7 @@ export function AppProvider({ children }) {
         uom: product.uom,
         initialStock: product.initialStock || 0,
         reorderLevel: product.reorderLevel || 0,
+        perUnitCost: product.perUnitCost || 0,
       });
       setProducts([...products, newProduct]);
       showToast('Product added successfully', 'success');
@@ -97,6 +98,7 @@ export function AppProvider({ children }) {
         uom: updates.uom,
         stock: updates.stock !== undefined ? updates.stock : updates.initialStock,
         reorderLevel: updates.reorderLevel,
+        perUnitCost: updates.perUnitCost,
       });
       setProducts(products.map(p => p.id === id ? updated : p));
       showToast('Product updated successfully', 'success');
@@ -115,6 +117,27 @@ export function AppProvider({ children }) {
       console.error('Error deleting product:', error);
       showToast(error.message || 'Failed to delete product', 'error');
     }
+  };
+
+  // Stock update operation (for stock management page)
+  const updateStock = (id, stockData) => {
+    setProducts(products.map(p => {
+      if (p.id === id) {
+        const updated = {
+          ...p,
+          onHand: stockData.onHand,
+          freeToUse: stockData.freeToUse,
+          stock: stockData.onHand, // Keep stock in sync with onHand
+        };
+        // Update per unit cost if provided
+        if (stockData.perUnitCost !== undefined) {
+          updated.perUnitCost = stockData.perUnitCost;
+        }
+        updated.status = getProductStatus(updated.stock, updated.reorderLevel);
+        return updated;
+      }
+      return p;
+    }));
   };
 
   // Receipt operations
@@ -294,6 +317,7 @@ export function AppProvider({ children }) {
     addProduct,
     updateProduct,
     deleteProduct,
+    updateStock,
     addReceipt,
     updateReceipt,
     validateReceipt,
