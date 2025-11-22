@@ -150,8 +150,24 @@ export async function deleteReceipt(id) {
 }
 
 // Deliveries API
-export async function fetchDeliveries() {
-  const response = await api.get('/deliveries');
+export async function fetchDeliveries(params = {}) {
+  const queryParams = new URLSearchParams();
+  if (params.status) queryParams.append('status', params.status);
+  if (params.from_date) queryParams.append('from_date', params.from_date);
+  if (params.to_date) queryParams.append('to_date', params.to_date);
+  if (params.search) queryParams.append('search', params.search);
+  if (params.page) queryParams.append('page', params.page);
+  if (params.limit) queryParams.append('limit', params.limit);
+  if (params.sort_by) queryParams.append('sort_by', params.sort_by);
+  if (params.sort_order) queryParams.append('sort_order', params.sort_order);
+  
+  const query = queryParams.toString();
+  const response = await api.get(`/deliveries${query ? `?${query}` : ''}`);
+  return response.data;
+}
+
+export async function fetchDeliveryById(id) {
+  const response = await api.get(`/deliveries/${id}`);
   return response.data;
 }
 
@@ -167,6 +183,32 @@ export async function updateDelivery(id, delivery) {
 
 export async function deleteDelivery(id) {
   const response = await api.delete(`/deliveries/${id}`);
+  return response.data;
+}
+
+export async function addDeliveryItem(deliveryId, item) {
+  const response = await api.post(`/deliveries/${deliveryId}/add-item`, item);
+  return response.data;
+}
+
+export async function removeDeliveryItem(deliveryId, itemId) {
+  const response = await api.delete(`/deliveries/${deliveryId}/items/${itemId}`);
+  return response.data;
+}
+
+export async function validateDelivery(id) {
+  const response = await api.post(`/deliveries/${id}/validate`);
+  return response.data;
+}
+
+export async function processDelivery(id) {
+  const response = await api.post(`/deliveries/${id}/process`);
+  return response.data;
+}
+
+export async function fetchAvailableStock(locationId) {
+  const query = locationId ? `?location_id=${locationId}` : '';
+  const response = await api.get(`/products/available-stock${query}`);
   return response.data;
 }
 
