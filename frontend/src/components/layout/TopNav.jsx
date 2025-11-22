@@ -54,7 +54,16 @@ export default function TopNav() {
         {/* Logo and Brand */}
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 grid place-items-center rounded-md bg-gradient-to-br from-indigo-500 to-violet-500 text-white text-sm font-medium tracking-tight">
+            <img 
+              src="/logo.png" 
+              alt="StockMaster Logo" 
+              className="h-8 w-8 object-contain"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'grid';
+              }}
+            />
+            <div className="h-8 w-8 grid place-items-center rounded-md bg-gradient-to-br from-indigo-500 to-violet-500 text-white text-sm font-medium tracking-tight hidden">
               SM
             </div>
             <span className="text-base font-semibold tracking-tight text-slate-100 hidden sm:inline">StockMaster</span>

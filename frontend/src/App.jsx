@@ -25,9 +25,13 @@ function ProtectedRoute({ children }) {
 }
 
 // Public Route Component (redirects to dashboard if logged in)
-function PublicRoute({ children }) {
+// But allow signup page to be accessible even if logged in (for creating new accounts)
+function PublicRoute({ children, allowWhenLoggedIn = false }) {
   const { user } = useApp();
-  return user ? <Navigate to="/dashboard" replace /> : children;
+  if (user && !allowWhenLoggedIn) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  return children;
 }
 
 function AppRoutes() {
@@ -48,7 +52,7 @@ function AppRoutes() {
         <Route
           path="/signup"
           element={
-            <PublicRoute>
+            <PublicRoute allowWhenLoggedIn={true}>
               <Signup />
             </PublicRoute>
           }

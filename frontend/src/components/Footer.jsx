@@ -12,7 +12,16 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-6 pb-10">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 border-t border-white/10 pt-6">
           <div className="flex items-center gap-3">
-            <div className="h-7 w-7 grid place-items-center rounded-md bg-gradient-to-br from-indigo-500 to-violet-500 text-white text-xs font-medium tracking-tight">
+            <img 
+              src="/logo.png" 
+              alt="StockMaster Logo" 
+              className="h-7 w-7 object-contain"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'grid';
+              }}
+            />
+            <div className="h-7 w-7 grid place-items-center rounded-md bg-gradient-to-br from-indigo-500 to-violet-500 text-white text-xs font-medium tracking-tight hidden">
               SM
             </div>
             <div className="text-sm font-semibold tracking-tight text-slate-100">StockMaster</div>

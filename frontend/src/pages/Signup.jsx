@@ -229,8 +229,19 @@ export default function Signup() {
         <div className="relative w-full max-w-md">
           <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-8">
             <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center h-12 w-12 rounded-md bg-gradient-to-br from-indigo-500 to-violet-500 text-white text-lg font-medium mb-4">
-                SM
+              <div className="flex justify-center mb-4">
+                <img 
+                  src="/logo.png" 
+                  alt="StockMaster Logo" 
+                  className="h-12 w-12 object-contain"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'inline-flex';
+                  }}
+                />
+                <div className="inline-flex items-center justify-center h-12 w-12 rounded-md bg-gradient-to-br from-indigo-500 to-violet-500 text-white text-lg font-medium hidden">
+                  SM
+                </div>
               </div>
               <h1 className="text-2xl font-semibold text-slate-50 mb-2">Verify Your Email</h1>
               <p className="text-sm text-slate-400">
@@ -298,8 +309,19 @@ export default function Signup() {
       <div className="relative w-full max-w-md">
         <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-8">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center h-12 w-12 rounded-md bg-gradient-to-br from-indigo-500 to-violet-500 text-white text-lg font-medium mb-4">
-              SM
+            <div className="flex justify-center mb-4">
+              <img 
+                src="/logo.png" 
+                alt="StockMaster Logo" 
+                className="h-12 w-12 object-contain"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'inline-flex';
+                }}
+              />
+              <div className="inline-flex items-center justify-center h-12 w-12 rounded-md bg-gradient-to-br from-indigo-500 to-violet-500 text-white text-lg font-medium hidden">
+                SM
+              </div>
             </div>
             <h1 className="text-2xl font-semibold text-slate-50 mb-2">StockMaster</h1>
             <p className="text-sm text-slate-400">Create your account</p>
