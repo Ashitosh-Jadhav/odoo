@@ -11,16 +11,17 @@ const STORAGE_KEYS = {
 
 // Mock initial data
 const initialProducts = [
-  { id: 1, name: 'Steel Rods', sku: 'STL-001', category: 'Raw Materials', uom: 'kg', stock: 1250, reorderLevel: 200, status: 'in_stock' },
-  { id: 2, name: 'Office Chairs', sku: 'FUR-001', category: 'Furniture', uom: 'pcs', stock: 45, reorderLevel: 20, status: 'in_stock' },
-  { id: 3, name: 'Laptop Computers', sku: 'ELC-001', category: 'Electronics', uom: 'pcs', stock: 12, reorderLevel: 15, status: 'low_stock' },
-  { id: 4, name: 'Wooden Planks', sku: 'RAW-001', category: 'Raw Materials', uom: 'meters', stock: 320, reorderLevel: 100, status: 'in_stock' },
-  { id: 5, name: 'Paint (Blue)', sku: 'CHM-001', category: 'Chemicals', uom: 'liters', stock: 8, reorderLevel: 20, status: 'low_stock' },
-  { id: 6, name: 'Screws (M6)', sku: 'HRD-001', category: 'Hardware', uom: 'pcs', stock: 0, reorderLevel: 500, status: 'out_of_stock' },
-  { id: 7, name: 'LED Bulbs', sku: 'ELC-002', category: 'Electronics', uom: 'pcs', stock: 150, reorderLevel: 50, status: 'in_stock' },
-  { id: 8, name: 'Desk Tables', sku: 'FUR-002', category: 'Furniture', uom: 'pcs', stock: 25, reorderLevel: 10, status: 'in_stock' },
-  { id: 9, name: 'Motor Oil', sku: 'CHM-002', category: 'Chemicals', uom: 'liters', stock: 5, reorderLevel: 30, status: 'low_stock' },
-  { id: 10, name: 'Nails (3 inch)', sku: 'HRD-002', category: 'Hardware', uom: 'pcs', stock: 850, reorderLevel: 200, status: 'in_stock' },
+  { id: 1, name: 'Desk', sku: 'FUR-DESK-001', category: 'Furniture', uom: 'pcs', stock: 50, onHand: 50, freeToUse: 45, perUnitCost: 3000, reorderLevel: 20, status: 'in_stock' },
+  { id: 2, name: 'Table', sku: 'FUR-TBL-001', category: 'Furniture', uom: 'pcs', stock: 50, onHand: 50, freeToUse: 50, perUnitCost: 3000, reorderLevel: 20, status: 'in_stock' },
+  { id: 3, name: 'Steel Rods', sku: 'STL-001', category: 'Raw Materials', uom: 'kg', stock: 1250, onHand: 1250, freeToUse: 1200, perUnitCost: 150, reorderLevel: 200, status: 'in_stock' },
+  { id: 4, name: 'Office Chairs', sku: 'FUR-001', category: 'Furniture', uom: 'pcs', stock: 45, onHand: 45, freeToUse: 40, perUnitCost: 2500, reorderLevel: 20, status: 'in_stock' },
+  { id: 5, name: 'Laptop Computers', sku: 'ELC-001', category: 'Electronics', uom: 'pcs', stock: 12, onHand: 12, freeToUse: 10, perUnitCost: 45000, reorderLevel: 15, status: 'low_stock' },
+  { id: 6, name: 'Wooden Planks', sku: 'RAW-001', category: 'Raw Materials', uom: 'meters', stock: 320, onHand: 320, freeToUse: 300, perUnitCost: 500, reorderLevel: 100, status: 'in_stock' },
+  { id: 7, name: 'Paint (Blue)', sku: 'CHM-001', category: 'Chemicals', uom: 'liters', stock: 8, onHand: 8, freeToUse: 5, perUnitCost: 800, reorderLevel: 20, status: 'low_stock' },
+  { id: 8, name: 'Screws (M6)', sku: 'HRD-001', category: 'Hardware', uom: 'pcs', stock: 0, onHand: 0, freeToUse: 0, perUnitCost: 5, reorderLevel: 500, status: 'out_of_stock' },
+  { id: 9, name: 'LED Bulbs', sku: 'ELC-002', category: 'Electronics', uom: 'pcs', stock: 150, onHand: 150, freeToUse: 140, perUnitCost: 200, reorderLevel: 50, status: 'in_stock' },
+  { id: 10, name: 'Motor Oil', sku: 'CHM-002', category: 'Chemicals', uom: 'liters', stock: 5, onHand: 5, freeToUse: 3, perUnitCost: 600, reorderLevel: 30, status: 'low_stock' },
+  { id: 11, name: 'Nails (3 inch)', sku: 'HRD-002', category: 'Hardware', uom: 'pcs', stock: 850, onHand: 850, freeToUse: 800, perUnitCost: 2, reorderLevel: 200, status: 'in_stock' },
 ];
 
 const initialReceipts = [
@@ -82,11 +83,15 @@ export function AppProvider({ children }) {
 
   // Product operations
   const addProduct = (product) => {
+    const initialStock = product.initialStock || 0;
     const newProduct = {
       ...product,
       id: Date.now(),
-      stock: product.initialStock || 0,
-      status: getProductStatus(product.initialStock || 0, product.reorderLevel || 0),
+      stock: initialStock,
+      onHand: initialStock,
+      freeToUse: initialStock,
+      perUnitCost: product.perUnitCost || 0,
+      status: getProductStatus(initialStock, product.reorderLevel || 0),
     };
     setProducts([...products, newProduct]);
     showToast('Product added successfully', 'success');
@@ -95,7 +100,28 @@ export function AppProvider({ children }) {
   const updateProduct = (id, updates) => {
     setProducts(products.map(p => {
       if (p.id === id) {
-        const updated = { ...p, ...updates };
+        // If initialStock is provided, update stock fields accordingly
+        let stockUpdate = {};
+        if (updates.initialStock !== undefined) {
+          const newStock = updates.initialStock;
+          stockUpdate = {
+            stock: newStock,
+            onHand: newStock,
+            freeToUse: newStock,
+          };
+        }
+        
+        const updated = { 
+          ...p, 
+          ...updates,
+          ...stockUpdate,
+        };
+        // Remove initialStock as it's not a product field
+        delete updated.initialStock;
+        // Ensure perUnitCost is preserved
+        if (updates.perUnitCost !== undefined) {
+          updated.perUnitCost = updates.perUnitCost;
+        }
         updated.status = getProductStatus(updated.stock, updated.reorderLevel);
         return updated;
       }
@@ -107,6 +133,23 @@ export function AppProvider({ children }) {
   const deleteProduct = (id) => {
     setProducts(products.filter(p => p.id !== id));
     showToast('Product deleted successfully', 'success');
+  };
+
+  // Stock update operation (for stock management page)
+  const updateStock = (id, stockData) => {
+    setProducts(products.map(p => {
+      if (p.id === id) {
+        const updated = {
+          ...p,
+          onHand: stockData.onHand,
+          freeToUse: stockData.freeToUse,
+          stock: stockData.onHand, // Keep stock in sync with onHand
+        };
+        updated.status = getProductStatus(updated.stock, updated.reorderLevel);
+        return updated;
+      }
+      return p;
+    }));
   };
 
   // Receipt operations
@@ -261,6 +304,7 @@ export function AppProvider({ children }) {
     addProduct,
     updateProduct,
     deleteProduct,
+    updateStock,
     addReceipt,
     updateReceipt,
     validateReceipt,
